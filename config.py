@@ -12,6 +12,10 @@ class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")
     MAX_CONTENT_LENGTH = 10 * 1024 * 1024
     
+    # WebRTC and SocketIO configuration
+    SOCKETIO_CORS_ALLOWED_ORIGINS = "*"
+    SOCKETIO_ASYNC_MODE = 'threading'
+    
     # Upload folders
     UPLOAD_FOLDER = 'uploads'
     COMPRESSED_FOLDER = 'compressed'

@@ -103,6 +103,32 @@ class DatabaseManager:
             )
         ''')
         
+        # Students table
+        cursor.execute('''
+            CREATE TABLE students (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                email TEXT UNIQUE NOT NULL,
+                institution TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            )
+        ''')
+        
+        # Student responses table (for quizzes and polls)
+        cursor.execute('''
+            CREATE TABLE student_responses (
+                id TEXT PRIMARY KEY,
+                student_id TEXT NOT NULL,
+                quiz_id TEXT,
+                poll_id TEXT,
+                response TEXT NOT NULL,
+                timestamp TEXT NOT NULL,
+                FOREIGN KEY (student_id) REFERENCES students (id),
+                FOREIGN KEY (quiz_id) REFERENCES quizzes (id),
+                FOREIGN KEY (poll_id) REFERENCES polls (id)
+            )
+        ''')
+        
         cls._conn.commit()
     
     @classmethod
@@ -232,3 +258,57 @@ class DatabaseManager:
         cursor = cls._execute_query(query, (email,))
         result = cursor.fetchone()
         return dict(result) if result else None
+    
+    @classmethod
+    def get_all_lectures(cls):
+        """Get all lectures (for public access)"""
+        query = '''
+            SELECT l.*, t.name as teacher_name, t.institution 
+            FROM lectures l 
+            JOIN teachers t ON l.teacher_id = t.id 
+            ORDER BY l.created_at DESC
+        '''
+        cursor = cls._execute_query(query)
+        return [dict(row) for row in cursor.fetchall()]
+    
+    @classmethod
+    def create_student(cls, name, email, institution):
+        """Register a new student"""
+        student_id = str(uuid.uuid4())
+        created_at = datetime.now().isoformat()
+        
+        query = '''
+            INSERT INTO students (id, name, email, institution, created_at)
+            VALUES (?, ?, ?, ?, ?)
+        '''
+        cls._execute_query(query, (student_id, name, email, institution, created_at))
+        
+        return student_id, {"data": {"id": student_id}}
+    
+    @classmethod
+    def submit_quiz_response(cls, student_id, quiz_id, response):
+        """Submit a quiz response"""
+        response_id = str(uuid.uuid4())
+        timestamp = datetime.now().isoformat()
+        
+        query = '''
+            INSERT INTO student_responses (id, student_id, quiz_id, response, timestamp)
+            VALUES (?, ?, ?, ?, ?)
+        '''
+        cls._execute_query(query, (response_id, student_id, quiz_id, response, timestamp))
+        
+        return response_id, {"data": {"id": response_id}}
+    
+    @classmethod
+    def submit_poll_response(cls, student_id, poll_id, response):
+        """Submit a poll response"""
+        response_id = str(uuid.uuid4())
+        timestamp = datetime.now().isoformat()
+        
+        query = '''
+            INSERT INTO student_responses (id, student_id, poll_id, response, timestamp)
+            VALUES (?, ?, ?, ?, ?)
+        '''
+        cls._execute_query(query, (response_id, student_id, poll_id, response, timestamp))
+        
+        return response_id, {"data": {"id": response_id}}

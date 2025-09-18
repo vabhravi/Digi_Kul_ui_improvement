@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - DigiKul</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 1rem;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background: #28a745;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .lecture-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .lecture-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        
+        .lecture-card h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .lecture-card p {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        
+        .lecture-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .status-live {
+            background: #d4edda;
+            color: #155724;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-upcoming {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-ended {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, #6c757d, #495057);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(45deg, #ffc107, #fd7e14);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #28a745;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .offline-content {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .download-progress {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .download-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .connection-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            z-index: 1000;
+        }
+        
+        .connection-online {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .connection-offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .bandwidth-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            z-index: 1000;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .lecture-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎒 Student Dashboard</h1>
+        <p>Join live classes, download materials, and learn offline</p>
+    </div>
+    
+    <div class="connection-status" id="connection-status">
+        🔴 Offline
+    </div>
+    
+    <div class="bandwidth-indicator" id="bandwidth-indicator">
+        📶 Bandwidth: Unknown
+    </div>
+    
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('live')">🔴 Live Classes</button>
+            <button class="tab" onclick="switchTab('upcoming')">📅 Upcoming</button>
+            <button class="tab" onclick="switchTab('offline')">📱 Offline</button>
+            <button class="tab" onclick="switchTab('profile')">👤 Profile</button>
+        </div>
+        
+        <!-- Live Classes Tab -->
+        <div id="live" class="tab-content active">
+            <h2>Live Classes</h2>
+            <div id="live-lectures-list"></div>
+        </div>
+        
+        <!-- Upcoming Classes Tab -->
+        <div id="upcoming" class="tab-content">
+            <h2>Upcoming Classes</h2>
+            <div id="upcoming-lectures-list"></div>
+        </div>
+        
+        <!-- Offline Content Tab -->
+        <div id="offline" class="tab-content">
+            <h2>Offline Content</h2>
+            <div class="offline-content">
+                <h3>📱 Downloaded Materials</h3>
+                <p>Access your downloaded lecture materials when offline.</p>
+                <div id="offline-materials-list"></div>
+            </div>
+            
+            <div class="offline-content">
+                <h3>📥 Download for Offline</h3>
+                <p>Download lecture materials for offline access.</p>
+                <div class="form-group">
+                    <label for="download-lecture-select">Select Lecture to Download</label>
+                    <select id="download-lecture-select" style="width: 100%; padding: 0.8rem; border: 2px solid #e9ecef; border-radius: 8px;">
+                        <option value="">Choose a lecture...</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="downloadLecturePackage()">📥 Download Package</button>
+                <div class="download-progress" id="download-progress">
+                    <div class="download-fill" id="download-fill"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Profile Tab -->
+        <div id="profile" class="tab-content">
+            <h2>Student Profile</h2>
+            <div id="profile-form">
+                <form id="student-register-form">
+                    <div class="form-group">
+                        <label for="student-name">Full Name</label>
+                        <input type="text" id="student-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="student-email">Email</label>
+                        <input type="email" id="student-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="student-institution">Institution</label>
+                        <input type="text" id="student-institution" required>
+                    </div>
+                    <button type="submit" class="btn">Register</button>
+                </form>
+            </div>
+        </div>
+        
+        <div id="alert" class="alert"></div>
+    </div>
+
+    <script>
+        let currentStudent = null;
+        let studentId = null;
+        let socket = null;
+        let isOnline = navigator.onLine;
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            checkStudentAuth();
+            updateConnectionStatus();
+            
+            // Monitor connection status
+            window.addEventListener('online', updateConnectionStatus);
+            window.addEventListener('offline', updateConnectionStatus);
+            
+            // Monitor bandwidth
+            monitorBandwidth();
+        });
+        
+        function updateConnectionStatus() {
+            isOnline = navigator.onLine;
+            const statusDiv = document.getElementById('connection-status');
+            
+            if (isOnline) {
+                statusDiv.className = 'connection-status connection-online';
+                statusDiv.innerHTML = '🟢 Online';
+            } else {
+                statusDiv.className = 'connection-status connection-offline';
+                statusDiv.innerHTML = '🔴 Offline';
+            }
+        }
+        
+        function monitorBandwidth() {
+            if ('connection' in navigator) {
+                const connection = navigator.connection;
+                
+                function updateBandwidth() {
+                    const bandwidthDiv = document.getElementById('bandwidth-indicator');
+                    const effectiveType = connection.effectiveType || 'unknown';
+                    const downlink = connection.downlink || 0;
+                    
+                    bandwidthDiv.innerHTML = `📶 ${effectiveType.toUpperCase()} (${downlink} Mbps)`;
+                    
+                    // Adjust UI based on bandwidth
+                    if (downlink < 1) {
+                        bandwidthDiv.style.background = 'rgba(220, 53, 69, 0.8)';
+                    } else if (downlink < 5) {
+                        bandwidthDiv.style.background = 'rgba(255, 193, 7, 0.8)';
+                    } else {
+                        bandwidthDiv.style.background = 'rgba(40, 167, 69, 0.8)';
+                    }
+                }
+                
+                updateBandwidth();
+                connection.addEventListener('change', updateBandwidth);
+            }
+        }
+        
+        function checkStudentAuth() {
+            const savedStudent = localStorage.getItem('student_info');
+            
+            if (savedStudent) {
+                currentStudent = JSON.parse(savedStudent);
+                studentId = currentStudent.id;
+                showStudentInfo();
+                loadLectures();
+            } else {
+                showRegistrationForm();
+            }
+        }
+        
+        function showStudentInfo() {
+            document.getElementById('student-name').value = currentStudent.name;
+            document.getElementById('student-email').value = currentStudent.email;
+            document.getElementById('student-institution').value = currentStudent.institution;
+            
+            // Disable form if already registered
+            document.getElementById('student-register-form').style.display = 'none';
+            document.querySelector('#profile .tab-content').innerHTML += `
+                <div style="background: #d4edda; padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                    <h3>✅ Registered Successfully</h3>
+                    <p><strong>Name:</strong> ${currentStudent.name}</p>
+                    <p><strong>Email:</strong> ${currentStudent.email}</p>
+                    <p><strong>Institution:</strong> ${currentStudent.institution}</p>
+                </div>
+            `;
+        }
+        
+        function showRegistrationForm() {
+            // Form is already shown, just enable it
+        }
+        
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+            
+            // Load content based on tab
+            if (tabName === 'live' || tabName === 'upcoming') {
+                loadLectures();
+            } else if (tabName === 'offline') {
+                loadOfflineContent();
+                loadLecturesForDownload();
+            }
+        }
+        
+        async function loadLectures() {
+            try {
+                const response = await fetch('/api/lectures/public');
+                const lectures = await response.json();
+                
+                displayLectures(lectures);
+            } catch (error) {
+                if (isOnline) {
+                    showAlert('Failed to load lectures: ' + error.message, 'error');
+                } else {
+                    // Load from cache if offline
+                    loadFromCache();
+                }
+            }
+        }
+        
+        function displayLectures(lectures) {
+            const now = new Date();
+            const liveLectures = [];
+            const upcomingLectures = [];
+            
+            lectures.forEach(lecture => {
+                const scheduled = new Date(lecture.scheduled_time);
+                const endTime = new Date(scheduled.getTime() + lecture.duration * 60000);
+                
+                if (now >= scheduled && now <= endTime && lecture.session_active) {
+                    liveLectures.push(lecture);
+                } else if (scheduled > now) {
+                    upcomingLectures.push(lecture);
+                }
+            });
+            
+            displayLectureList('live-lectures-list', liveLectures, 'live');
+            displayLectureList('upcoming-lectures-list', upcomingLectures, 'upcoming');
+            
+            // Cache lectures for offline use
+            if (isOnline) {
+                localStorage.setItem('cached_lectures', JSON.stringify(lectures));
+            }
+        }
+        
+        function displayLectureList(containerId, lectures, type) {
+            const container = document.getElementById(containerId);
+            
+            if (lectures.length === 0) {
+                container.innerHTML = `<p>No ${type} lectures found.</p>`;
+                return;
+            }
+            
+            container.innerHTML = lectures.map(lecture => {
+                const scheduled = new Date(lecture.scheduled_time);
+                const statusClass = type === 'live' ? 'status-live' : 'status-upcoming';
+                const statusText = type === 'live' ? 'Live Now' : 'Upcoming';
+                
+                return `
+                    <div class="lecture-card">
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                        <h3>${lecture.title}</h3>
+                        <p>${lecture.description || 'No description'}</p>
+                        <div class="lecture-info">
+                            <div class="info-item">
+                                <span>👨‍🏫</span>
+                                <span>${lecture.teacher_name}</span>
+                            </div>
+                            <div class="info-item">
+                                <span>🏫</span>
+                                <span>${lecture.institution}</span>
+                            </div>
+                            <div class="info-item">
+                                <span>🕐</span>
+                                <span>${scheduled.toLocaleString()}</span>
+                            </div>
+                            <div class="info-item">
+                                <span>⏱️</span>
+                                <span>${lecture.duration} minutes</span>
+                            </div>
+                        </div>
+                        <div>
+                            ${type === 'live' ? 
+                                `<button class="btn" onclick="joinLiveSession('${lecture.id}')">🔴 Join Live</button>` :
+                                `<button class="btn btn-secondary" onclick="setReminder('${lecture.id}')">⏰ Set Reminder</button>`
+                            }
+                            <button class="btn btn-secondary" onclick="viewMaterials('${lecture.id}')">📁 Materials</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function loadFromCache() {
+            const cached = localStorage.getItem('cached_lectures');
+            if (cached) {
+                const lectures = JSON.parse(cached);
+                displayLectures(lectures);
+                showAlert('Showing cached content. Connect to internet for latest updates.', 'warning');
+            }
+        }
+        
+        function loadOfflineContent() {
+            const offlineMaterials = localStorage.getItem('offline_materials') || '[]';
+            const materials = JSON.parse(offlineMaterials);
+            
+            const container = document.getElementById('offline-materials-list');
+            
+            if (materials.length === 0) {
+                container.innerHTML = '<p>No offline materials available.</p>';
+                return;
+            }
+            
+            container.innerHTML = materials.map(material => `
+                <div style="background: white; padding: 1rem; border-radius: 8px; margin-bottom: 0.5rem; border: 1px solid #e9ecef;">
+                    <h4>${material.title}</h4>
+                    <p>${material.description || 'No description'}</p>
+                    <p><small>Downloaded: ${new Date(material.downloaded_at).toLocaleDateString()}</small></p>
+                    <button class="btn btn-secondary" onclick="openOfflineMaterial('${material.id}')">📖 Open</button>
+                </div>
+            `).join('');
+        }
+        
+        async function loadLecturesForDownload() {
+            try {
+                const response = await fetch('/api/lectures/public');
+                const lectures = await response.json();
+                
+                const select = document.getElementById('download-lecture-select');
+                select.innerHTML = '<option value="">Choose a lecture...</option>' +
+                    lectures.map(lecture => 
+                        `<option value="${lecture.id}">${lecture.title} - ${lecture.teacher_name}</option>`
+                    ).join('');
+            } catch (error) {
+                showAlert('Failed to load lectures for download', 'error');
+            }
+        }
+        
+        async function downloadLecturePackage() {
+            const lectureId = document.getElementById('download-lecture-select').value;
+            
+            if (!lectureId) {
+                showAlert('Please select a lecture to download', 'error');
+                return;
+            }
+            
+            if (!isOnline) {
+                showAlert('Cannot download while offline', 'error');
+                return;
+            }
+            
+            const progressBar = document.getElementById('download-progress');
+            const progressFill = document.getElementById('download-fill');
+            
+            progressBar.style.display = 'block';
+            
+            try {
+                const response = await fetch(`/api/lecture/${lectureId}/download_package`);
+                const packageInfo = await response.json();
+                
+                if (response.ok) {
+                    // Simulate download progress
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        progress += 10;
+                        progressFill.style.width = progress + '%';
+                        
+                        if (progress >= 100) {
+                            clearInterval(interval);
+                            
+                            // Save to offline storage
+                            const offlineMaterials = JSON.parse(localStorage.getItem('offline_materials') || '[]');
+                            packageInfo.materials.forEach(material => {
+                                material.downloaded_at = new Date().toISOString();
+                                offlineMaterials.push(material);
+                            });
+                            localStorage.setItem('offline_materials', JSON.stringify(offlineMaterials));
+                            
+                            showAlert('Lecture package downloaded successfully!', 'success');
+                            progressBar.style.display = 'none';
+                            progressFill.style.width = '0%';
+                            
+                            // Refresh offline content
+                            loadOfflineContent();
+                        }
+                    }, 200);
+                } else {
+                    showAlert(packageInfo.error, 'error');
+                }
+            } catch (error) {
+                showAlert('Failed to download lecture package: ' + error.message, 'error');
+            }
+        }
+        
+        async function joinLiveSession(lectureId) {
+            if (!isOnline) {
+                showAlert('Cannot join live session while offline', 'error');
+                return;
+            }
+            
+            if (!studentId) {
+                showAlert('Please register first', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/live_session/session_${lectureId}_temp/join`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        student_name: currentStudent.name,
+                        student_id: studentId
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Open live session in new tab
+                    window.open(`/live/${result.session_id}`, '_blank');
+                    showAlert('Joining live session...', 'success');
+                } else {
+                    showAlert(result.error, 'error');
+                }
+            } catch (error) {
+                showAlert('Failed to join live session: ' + error.message, 'error');
+            }
+        }
+        
+        function openOfflineMaterial(materialId) {
+            const offlineMaterials = JSON.parse(localStorage.getItem('offline_materials') || '[]');
+            const material = offlineMaterials.find(m => m.id === materialId);
+            
+            if (material) {
+                showAlert(`Opening ${material.title}...`, 'success');
+                // In a real app, you would open the file with appropriate app
+            }
+        }
+        
+        // Event listeners
+        document.getElementById('student-register-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const data = {
+                name: document.getElementById('student-name').value,
+                email: document.getElementById('student-email').value,
+                institution: document.getElementById('student-institution').value
+            };
+            
+            try {
+                const response = await fetch('/api/students/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    currentStudent = { id: result.student_id, ...data };
+                    studentId = result.student_id;
+                    localStorage.setItem('student_info', JSON.stringify(currentStudent));
+                    showAlert('Registration successful!', 'success');
+                    showStudentInfo();
+                } else {
+                    showAlert(result.error, 'error');
+                }
+            } catch (error) {
+                showAlert('Registration failed: ' + error.message, 'error');
+            }
+        });
+        
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert alert-${type}`;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Placeholder functions
+        function setReminder(lectureId) {
+            showAlert('Reminder set!', 'success');
+        }
+        
+        function viewMaterials(lectureId) {
+            showAlert('Materials view coming soon!', 'success');
+        }
+    </script>
+</body>
+</html>
