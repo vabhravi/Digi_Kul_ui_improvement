@@ -1,0 +1,502 @@
+We are building a backend for a teacher's portal that will be used in a low-bandwidth environment.
+The backend should be in Python (using a framework like Flask or Django) and will interact with a Supabase database.
+Since the problem emphasizes low bandwidth, we need to design endpoints that are efficient and return minimal data.
+We are not building the frontend, but we will create HTML templates for testing the features.
+
+Key modules for the teacher's app might include:
+
+User Authentication (login, logout, register)
+
+Lecture Management (create, read, update, delete lectures)
+
+Live Session Management (start, end, and interact during live sessions)
+
+Recording Management (upload, delete, and manage recordings)
+
+Interactive Elements (quizzes, polls, discussion boards)
+
+Content Delivery (efficiently sending audio and visual content)
+
+Since bandwidth is low, we should consider:
+
+Compressing responses (using gzip)
+
+Sending only necessary data (e.g., using pagination)
+
+For live sessions, we might use a protocol that is low bandwidth (like WebSocket for real-time but with minimal data)
+
+For recordings, we might store them in a compressed format and allow downloading in chunks.
+
+However, note that the problem says: "minimise the learning curve for educators" and "financially sustainable", so we should use free and open-source technologies.
+
+We are to outline a software-only virtual-classroom ecosystem.
+
+Let's plan the endpoints for the teacher's side:
+
+Authentication:
+
+POST /register: Register a new teacher
+
+POST /login: Login a teacher
+
+POST /logout: Logout
+
+Lecture Management:
+
+GET /lectures: Get list of lectures (with pagination)
+
+POST /lectures: Create a new lecture (title, description, scheduled time, etc.)
+
+GET /lectures/{id}: Get details of a specific lecture
+
+PUT /lectures/{id}: Update a lecture
+
+DELETE /lectures/{id}: Delete a lecture
+
+Live Session Management:
+
+POST /lectures/{id}/start: Start a live session for a lecture (may generate a unique link or session code)
+
+POST /lectures/{id}/end: End the live session
+
+WebSocket or HTTP long polling for real-time interaction during live session (but note low bandwidth)
+
+During live session, interactive elements:
+
+POST /lectures/{id}/polls: Create a poll
+
+GET /lectures/{id}/polls: Get active polls
+
+POST /lectures/{id}/polls/{poll_id}/vote: Vote on a poll (for students, but teacher might view results)
+
+Similarly for quizzes and discussions.
+
+Recording Management:
+
+POST /lectures/{id}/recordings: Upload a recording (audio and/or compressed visuals)
+
+GET /lectures/{id}/recordings: Get list of recordings for a lecture
+
+DELETE /recordings/{id}: Delete a recording
+
+Content Delivery:
+
+We might use a separate endpoint for downloading recordings in chunks, and we should support range requests.
+
+Since the problem stresses low bandwidth, we might want to break the recording into small chunks and allow resumable downloads.
+
+However, note that the problem says: "ensure that learning can continue even during connectivity lapses", so we might want to break the content into small pieces that can be downloaded independently.
+
+We are also to provide recordings that are small enough for easy download.
+
+We are to use Supabase for database, so we can use Supabase storage for storing recordings and other media.
+
+Since the problem says: "without relying on specialised hardware or costly licences", we must use open-source and free tiers.
+
+We'll use Flask because it's lightweight and easy to set up.
+
+Steps:
+
+Set up a Flask application.
+
+Set up Supabase client for Python to interact with the database.
+
+Create the endpoints as described.
+
+However, note that the problem also says: "Faculty in cities need a simple way to deliver lectures from any quiet corner", so the teacher's interface should be simple and accessible from a web browser.
+
+We are only building the backend, but we will create simple HTML templates for testing.
+
+Let's start by setting up the project structure.
+
+We'll have:
+app.py: main application
+config.py: configuration (Supabase URL and key, etc.)
+templates/: HTML templates for testing
+
+We'll use the following libraries:
+flask
+supabase
+flask-socketio (if we use WebSockets for real-time, but note low bandwidth, we might use long polling instead)
+
+But note: low bandwidth might not suit WebSockets if there are many small messages? Actually, WebSockets have less overhead than HTTP for frequent communication. However, the problem says to prioritize audio and compress visual, so for interactive elements we might use HTTP long polling or WebSockets based on the situation.
+
+Since the problem says "synchronous interaction", we need real-time communication. We can use Flask-SocketIO which supports WebSockets and long polling fallback.
+
+However, the problem also says that the solution must work on entry-level smartphones, so we must consider the client side as well. But our part is the backend.
+
+Let's plan the real-time part:
+
+For live sessions, we can have:
+- Teacher starts a session, which creates a room.
+- Students join the room using a code or link.
+- Teacher sends audio and possibly compressed slides (as images or low-quality video) and the students receive.
+- We need to send the audio in a low-bitrate codec (like Opus) and images in compressed format (like JPEG with low quality).
+
+But note: we are only building the backend for the teacher's portal. The student side is a Flutter app.
+
+Our backend must provide APIs for the teacher to start a session and then stream audio and slides to the students.
+
+However, the problem says: "without specialised hardware", so we cannot assume the teacher has a professional microphone. We can use the browser's MediaRecorder API (on the teacher's frontend) to capture audio and video, but that frontend is not our responsibility.
+
+Our backend must receive the audio and video stream from the teacher and broadcast it to the students.
+
+Alternatively, we might use a low-bandwidth video conferencing protocol. But note: the problem says that previous interventions failed because they assumed high bandwidth.
+
+We might consider using a simple WebRTC-based solution, but WebRTC can be complex and might require TURN/STUN servers. Also, the problem says software-only and lightweight.
+
+Alternatively, we can use a simple HTTP-based streaming: the teacher's client sends audio chunks (compressed) via HTTP POST, and the students fetch these chunks via HTTP GET. This might work with long polling or chunked transfer encoding.
+
+However, for real-time interaction, we might need low latency.
+
+Given the constraints, maybe we can do:
+
+text
+ - Teacher's client captures audio and compresses it (using Opus) and sends it in chunks to the backend via HTTP POST every second or so.
+ - The backend stores the chunk and broadcasts it to the connected students (via WebSocket or long polling) or the students fetch the latest chunk periodically (which might introduce delay but works with low bandwidth).
+But note: the problem says "synchronous interaction", so we need to minimize latency.
+
+Another idea: use MQTT or a lightweight messaging protocol, but that might require another server.
+
+Since we are to use Python and Flask, and we are to avoid costly licenses, we might use Flask-SocketIO with the eventlet or gevent server to handle WebSockets.
+
+How about this:
+
+text
+ - The teacher starts a live session. The backend creates a room and returns a session ID.
+ - The teacher's frontend connects to the SocketIO server and joins the room.
+ - The teacher's frontend captures audio, compresses it, and sends base64-encoded audio chunks via SocketIO to the room.
+ - The backend receives the audio chunk and emits it to all students in the room.
+ - Similarly, for slides: the teacher sends an image (compressed) as base64, and the backend broadcasts it.
+But note: base64 encoding increases the size by about 33%. We might instead send binary data over SocketIO, which supports binary packets.
+
+However, the problem says: "prioritise audio quality", so we might send audio as Opus packets (which are binary) and images as JPEG binary.
+
+SocketIO supports binary, so we can send them as binary packets.
+
+But note: the problem says that the students are on entry-level smartphones, so we must consider the processing power for encoding/decoding.
+
+Alternatively, we can use a dedicated streaming server (like GStreamer) but that might be too heavy.
+
+Given the time constraints of a hackathon, we might stick with SocketIO for real-time communication.
+
+However, the problem also says that the solution must work with low and unstable data speeds. WebSockets might not be the best in unstable conditions because if the connection drops, the real-time stream will break. But SocketIO has built-in reconnection.
+
+We might also consider using a protocol that is more resilient to packet loss, but that is complex.
+
+Given the constraints, we might design the live session to be tolerant to disconnections by having the students buffer a few chunks.
+
+Also, the problem says: "ensure that learning can continue even during connectivity lapses", so we might want to allow the students to download missed chunks after reconnecting.
+
+So, during a live session, the backend might store the audio and slide chunks in a temporary storage. If a student disconnects, upon reconnection, they can fetch the missed chunks.
+
+But note: the problem says that the entire solution should be software-only and lightweight.
+
+We are to use Supabase, so we can store the chunks in Supabase storage, but that might be too slow for real-time.
+
+Alternatively, we can store the chunks in memory (Redis) but that requires another service and might not be persistent.
+
+Given the resource constraints of the college, we might avoid using Redis and instead use the database (Supabase) but with a efficient design.
+
+However, for real-time, we might not want to store every chunk in the database during the live session because that would be too slow.
+
+We can use a hybrid approach:
+- During the live session, chunks are stored in memory on the server (if we have multiple servers, we need sticky sessions or a shared memory store like Redis).
+- After the live session, the chunks are compiled into a recording and stored in Supabase storage.
+
+But the problem says that the college has low resources, so we might not be able to afford a server with a lot of RAM. Also, if the server restarts, the in-memory chunks are lost.
+
+Alternatively, we can not store the chunks at all and only rely on real-time broadcasting. If a student disconnects, they miss the live part but can download the recording later.
+
+The problem says: "provide recordings that remain small enough for easy download", so we must provide recordings.
+
+So, during the live session, the teacher's audio and slides are being recorded and stored temporarily. After the session, the recording is processed (compressed) and stored in Supabase.
+
+How to record:
+
+text
+ - The teacher's frontend sends audio and slide chunks to the backend via WebSocket (SocketIO) or HTTP POST.
+ - The backend stores these chunks in a temporary file or in memory until the session ends.
+ - After the session, the backend combines the chunks into a single file (e.g., an audio file and a slide deck) and stores it in Supabase storage.
+But note: the problem says that the solution must work during connectivity lapses, so if the teacher's internet disconnects during the live session, we should be able to resume.
+
+We might design the teacher's client to buffer chunks and send them when the connection is restored.
+
+This is getting complex.
+
+Given the time, we might simplify:
+
+text
+ - For the hackathon, we focus on the basic functionality: authentication, lecture management, and recording management.
+
+ - For the live session, we simulate it with a simple WebSocket room where the teacher can send messages (text) and images, and the students receive them.
+
+ - We leave the audio streaming for a future improvement, because audio streaming is complex and might require a dedicated streaming server.
+Alternatively, we can use a third-party service for audio streaming (like Janus Gateway) but that might not be financially sustainable.
+
+Given the constraints, let's stick to a simpler real-time interaction for now:
+
+text
+ - The teacher can send slides as images and text messages, and the students can receive them.
+
+ - For audio, we might rely on a separate audio call over a low-bandwidth protocol like VoIP, but that is out of our scope.
+Or, we can use a simple solution: the teacher's client records the audio and after the session, the audio is uploaded along with the slides as a recording.
+
+Then, the students can download the recording.
+
+But the problem says "synchronous interaction", so we need live interaction.
+
+We might use a low-bandwidth audio streaming solution like:
+
+text
+ - Teacher's client captures audio and encodes it to Opus.
+ - The encoded audio is sent via HTTP POST to the backend in chunks.
+ - The backend stores the chunk and makes it available for students to download via HTTP GET with a range request.
+
+ - The students would then continuously download the latest chunks, effectively creating a live stream.
+This is known as HTTP Live Streaming (HLS) or Dynamic Adaptive Streaming over HTTP (DASH). However, implementing HLS or DASH is complex.
+
+Given the time, we might not implement full audio streaming.
+
+Given the hackathon context, we might focus on the non-audio parts and assume that the audio is handled by a separate simple VoIP solution (like a phone call) or use a third-party service.
+
+But the problem says: "without relying on specialised hardware or costly licences", so we cannot use third-party services that cost money.
+
+Another idea: use WebRTC for audio, but that requires a signaling server and might require TURN/STUN servers. We can use a free STUN server, but TURN server might cost money if we use a third-party, or we can set up our own TURN server, but that might be complex.
+
+After considering, I think we should focus on the following for the hackathon:
+
+We will implement:
+
+text
+ - Authentication
+ - Lecture management
+ - Live session management without audio: only slides and text messages.
+ - Polls and quizzes during the live session.
+ - Recording management: after the live session, the teacher can upload the audio recording and the slides, and then the students can download.
+For the live session, we will use WebSockets (SocketIO) to real-time broadcast slides (as images) and text messages.
+
+Steps for live session:
+
+text
+ - Teacher starts a live session, which creates a SocketIO room.
+ - Teacher can send an image (slide) to the room. The image is sent as base64 or binary (preferably binary) over SocketIO to the backend, which then broadcasts to all students in the room.
+ - Teacher can also send text messages (chat) which are broadcasted.
+ - Teacher can create a poll: the poll question and options are sent to the backend, which broadcasts the poll to the students. The students can then vote, and the results are broadcasted.
+This avoids the complexity of audio streaming for now.
+
+We will also provide recording: after the session, the teacher can upload an audio file and the slides (as a PDF or images) and then associate them with the lecture.
+
+Now, let's plan the endpoints for the above.
+
+We'll use Flask-SocketIO for real-time features.
+
+SocketIO events:
+
+text
+ - 'connect': when a teacher or student connects.
+ - 'join': join a room (with lecture id)
+ - 'slide': teacher sends a slide (binary image data) -> broadcast to room
+ - 'message': teacher or student sends a text message -> broadcast to room
+ - 'start_poll': teacher sends a poll (question, options) -> broadcast to room
+ - 'vote': student sends a vote (poll_id, option) -> backend updates and broadcasts results
+We'll also have HTTP endpoints for managing lectures and recordings.
+
+Given the complexity, we might not implement all features, but we'll try to cover the main ones.
+
+Let's start coding.
+
+We'll structure the code as:
+
+text
+ app.py: main Flask application
+ config.py: configuration
+ auth.py: authentication routes
+ lectures.py: lecture management routes
+ socket_events.py: SocketIO event handlers
+We'll use Blueprints to organize the HTTP routes.
+
+We'll use the following libraries:
+
+text
+ Flask
+ Flask-SocketIO
+ supabase
+We'll also use gzip compression for HTTP responses.
+
+Let's create the project structure.
+
+Note: We are to use Supabase, but our friend is setting up the database, so we will assume the following tables:
+
+text
+ Table: teachers
+    id (primary key)
+    email (unique)
+    password (hashed)
+
+ Table: lectures
+    id (primary key)
+    teacher_id (foreign key to teachers.id)
+    title
+    description
+    scheduled_time
+    created_at
+    updated_at
+
+ Table: live_sessions
+    id (primary key)
+    lecture_id (foreign key to lectures.id)
+    start_time
+    end_time
+    status (started, ended)
+
+ Table: slides
+    id (primary key)
+    session_id (foreign key to live_sessions.id)
+    slide_data (binary or reference to stored image)
+    timestamp
+
+ Table: messages
+    id (primary key)
+    session_id (foreign key to live_sessions.id)
+    sender (teacher or student id? or just name? we need to decide)
+    content
+    timestamp
+
+ Table: polls
+    id (primary key)
+    session_id (foreign key to live_sessions.id)
+    question
+    options (JSON: [{"option": "A", "votes": 0}, ...])
+    created_at
+But note: we are using Supabase, which is a PostgreSQL database, so we can use JSONB for the options.
+
+However, our friend is setting up the database, so we will wait for the exact schema.
+
+For now, we'll assume the above.
+
+Let's start by setting up the Flask app and authentication.
+
+We'll use JWT for authentication? or session-based? Since we are also using WebSockets, we might need to authenticate WebSocket connections.
+
+Flask-SocketIO supports authentication via cookies or query string.
+
+We'll use JWT for HTTP APIs and also for WebSocket authentication? Or we can use the same session-based authentication for both.
+
+Since the problem says "minimise the learning curve", we might use session-based authentication because it's simpler for a web application.
+
+However, for a Flutter app, JWT might be easier. But the teacher's portal is web and the student's app is Flutter.
+
+We are building the teacher's portal backend, so we can use session-based authentication for the teacher's web interface.
+
+But the student's Flutter app will use the same backend? Probably, but the student authentication might be separate.
+
+Since the problem statement says we are building the teacher's portal, we'll focus on teacher's authentication.
+
+We'll use session-based authentication for the teacher's web interface.
+
+Steps for session-based authentication:
+
+text
+ - When the teacher logs in, we set a session cookie.
+ - We protect the HTTP routes by checking the session.
+ - For SocketIO, we can use the session cookie to authenticate.
+However, note that the teacher's portal might be accessed from a mobile browser as well, so session is okay.
+
+Let's code the authentication.
+
+We'll create a Blueprint for auth.
+
+Note: We are to use Supabase for storing teacher credentials. We'll store the password hashed.
+
+We'll use Werkzeug for password hashing.
+
+Let's code.
+
+
+##Testing 
+3. Test Using curl or Postman
+User Authentication
+bash
+# Register a teacher
+curl -X POST http://localhost:5000/api/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "John Doe",
+    "email": "john@example.com",
+    "institution": "Rural College",
+    "subject": "Artificial Intelligence"
+  }'
+
+# Login (simplified - returns a token based on email)
+curl -X POST http://localhost:5000/api/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "john@example.com"
+  }'
+Lecture Management
+bash
+# Create a lecture (replace TEACHER_ID with the ID from registration)
+curl -X POST http://localhost:5000/api/lectures \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "title": "Introduction to AI",
+    "description": "Basic concepts of artificial intelligence",
+    "scheduled_time": "2023-12-15T10:00:00",
+    "duration": 60
+  }'
+
+# Get all lectures for a teacher
+curl -X GET http://localhost:5000/api/lectures \
+  -H "Authorization: Bearer YOUR_TOKEN"
+Content Upload
+bash
+# Upload a material (replace LECTURE_ID with a valid ID)
+curl -X POST http://localhost:5000/api/upload_material \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -F "lecture_id=LECTURE_ID" \
+  -F "title=Lecture Notes" \
+  -F "description=PDF notes for the lecture" \
+  -F "file=@/path/to/your/file.pdf"
+Interactive Elements
+bash
+# Create a quiz
+curl -X POST http://localhost:5000/api/quiz \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "lecture_id": "LECTURE_ID",
+    "question": "What is machine learning?",
+    "options": ["A type of AI", "A programming language", "A database system", "An operating system"],
+    "correct_answer": "A type of AI"
+  }'
+
+# Create a poll
+curl -X POST http://localhost:5000/api/poll \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "lecture_id": "LECTURE_ID",
+    "question": "Which topic was most interesting?",
+    "options": ["Neural Networks", "Natural Language Processing", "Computer Vision", "Reinforcement Learning"]
+  }'
+
+# Add a discussion message
+curl -X POST http://localhost:5000/api/discussion \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{
+    "lecture_id": "LECTURE_ID",
+    "message": "Great lecture! When will we cover deep learning?"
+  }'
+Content Delivery
+bash
+# Get materials for a lecture
+curl -X GET http://localhost:5000/api/lecture/LECTURE_ID/materials \
+  -H "Authorization: Bearer YOUR_TOKEN"
+
+# Download a material
+curl -X GET http://localhost:5000/api/download/MATERIAL_ID \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -o downloaded_file.pdf

@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - DigiKul</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 1rem;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-success {
+            background: linear-gradient(45deg, #28a745, #20c997);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(45deg, #dc3545, #e83e8c);
+        }
+        
+        .lecture-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .lecture-card h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .lecture-card p {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        
+        .lecture-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-scheduled {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+        
+        .upload-area:hover {
+            border-color: #667eea;
+        }
+        
+        .upload-area.dragover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        .file-info {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .materials-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .material-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .material-info h4 {
+            color: #333;
+            margin-bottom: 0.3rem;
+        }
+        
+        .material-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .lecture-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>👨‍🏫 Teacher Dashboard</h1>
+        <p>Manage your lectures, upload materials, and conduct live sessions</p>
+    </div>
+    
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('lectures')">📚 My Lectures</button>
+            <button class="tab" onclick="switchTab('create')">➕ Create Lecture</button>
+            <button class="tab" onclick="switchTab('materials')">📁 Upload Materials</button>
+            <button class="tab" onclick="switchTab('live')">🔴 Live Sessions</button>
+        </div>
+        
+        <!-- Lectures Tab -->
+        <div id="lectures" class="tab-content active">
+            <h2>My Lectures</h2>
+            <div id="lectures-list"></div>
+        </div>
+        
+        <!-- Create Lecture Tab -->
+        <div id="create" class="tab-content">
+            <h2>Create New Lecture</h2>
+            <form id="lecture-form">
+                <div class="form-group">
+                    <label for="title">Lecture Title</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="scheduled_time">Scheduled Time</label>
+                    <input type="datetime-local" id="scheduled_time" name="scheduled_time" required>
+                </div>
+                <div class="form-group">
+                    <label for="duration">Duration (minutes)</label>
+                    <input type="number" id="duration" name="duration" min="15" max="180" value="60" required>
+                </div>
+                <button type="submit" class="btn">Create Lecture</button>
+            </form>
+        </div>
+        
+        <!-- Upload Materials Tab -->
+        <div id="materials" class="tab-content">
+            <h2>Upload Teaching Materials</h2>
+            <div class="form-group">
+                <label for="lecture-select">Select Lecture</label>
+                <select id="lecture-select" required>
+                    <option value="">Choose a lecture...</option>
+                </select>
+            </div>
+            
+            <div class="upload-area" id="upload-area">
+                <p>📁 Drag and drop files here or click to select</p>
+                <p><small>Supported: Audio (MP3, WAV), Images (PNG, JPG), Documents (PDF, DOC)</small></p>
+                <input type="file" id="file-input" multiple style="display: none;">
+            </div>
+            
+            <div class="file-info" id="file-info"></div>
+            <div class="progress-bar" id="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="material-title">Material Title</label>
+                <input type="text" id="material-title" placeholder="Enter material title">
+            </div>
+            <div class="form-group">
+                <label for="material-description">Description</label>
+                <textarea id="material-description" rows="2" placeholder="Enter description"></textarea>
+            </div>
+            <button class="btn" onclick="uploadMaterial()">Upload Material</button>
+        </div>
+        
+        <!-- Live Sessions Tab -->
+        <div id="live" class="tab-content">
+            <h2>Live Sessions</h2>
+            <div id="live-sessions-list"></div>
+        </div>
+        
+        <div id="alert" class="alert"></div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let currentUser = null;
+        let token = null;
+        let selectedFiles = [];
+        let socket = null;
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default scheduled time to next hour
+            const now = new Date();
+            now.setHours(now.getHours() + 1);
+            document.getElementById('scheduled_time').value = now.toISOString().slice(0, 16);
+            
+            // Setup file upload
+            setupFileUpload();
+            
+            // Check if user is logged in
+            checkAuth();
+        });
+        
+        function checkAuth() {
+            const savedToken = localStorage.getItem('teacher_token');
+            const savedUser = localStorage.getItem('teacher_user');
+            
+            if (savedToken && savedUser) {
+                token = savedToken;
+                currentUser = JSON.parse(savedUser);
+                loadLectures();
+                loadLiveSessions();
+            } else {
+                // Show login form
+                showLoginForm();
+            }
+        }
+        
+        function showLoginForm() {
+            const container = document.querySelector('.container');
+            container.innerHTML = `
+                <div style="max-width: 400px; margin: 0 auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <h2 style="text-align: center; margin-bottom: 2rem;">Teacher Login</h2>
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" required>
+                        </div>
+                        <button type="submit" class="btn" style="width: 100%;">Login</button>
+                    </form>
+                    <p style="text-align: center; margin-top: 1rem;">
+                        <a href="#" onclick="showRegisterForm()">Don't have an account? Register</a>
+                    </p>
+                </div>
+            `;
+            
+            document.getElementById('login-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                login(email);
+            });
+        }
+        
+        function showRegisterForm() {
+            const container = document.querySelector('.container');
+            container.innerHTML = `
+                <div style="max-width: 400px; margin: 0 auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <h2 style="text-align: center; margin-bottom: 2rem;">Teacher Registration</h2>
+                    <form id="register-form">
+                        <div class="form-group">
+                            <label for="reg-name">Name</label>
+                            <input type="text" id="reg-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-email">Email</label>
+                            <input type="email" id="reg-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="institution">Institution</label>
+                            <input type="text" id="institution" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <input type="text" id="subject" required>
+                        </div>
+                        <button type="submit" class="btn" style="width: 100%;">Register</button>
+                    </form>
+                    <p style="text-align: center; margin-top: 1rem;">
+                        <a href="#" onclick="showLoginForm()">Already have an account? Login</a>
+                    </p>
+                </div>
+            `;
+            
+            document.getElementById('register-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const data = {
+                    name: document.getElementById('reg-name').value,
+                    email: document.getElementById('reg-email').value,
+                    institution: document.getElementById('institution').value,
+                    subject: document.getElementById('subject').value
+                };
+                register(data);
+            });
+        }
+        
+        async function login(email) {
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    token = data.token;
+                    currentUser = { id: data.teacher_id, name: data.teacher_name };
+                    localStorage.setItem('teacher_token', token);
+                    localStorage.setItem('teacher_user', JSON.stringify(currentUser));
+                    location.reload();
+                } else {
+                    showAlert(data.error, 'error');
+                }
+            } catch (error) {
+                showAlert('Login failed: ' + error.message, 'error');
+            }
+        }
+        
+        async function register(data) {
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    token = result.token;
+                    currentUser = { id: result.teacher_id, name: data.name };
+                    localStorage.setItem('teacher_token', token);
+                    localStorage.setItem('teacher_user', JSON.stringify(currentUser));
+                    location.reload();
+                } else {
+                    showAlert(result.error, 'error');
+                }
+            } catch (error) {
+                showAlert('Registration failed: ' + error.message, 'error');
+            }
+        }
+        
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+            
+            // Load content based on tab
+            if (tabName === 'lectures') {
+                loadLectures();
+            } else if (tabName === 'materials') {
+                loadLecturesForUpload();
+            } else if (tabName === 'live') {
+                loadLiveSessions();
+            }
+        }
+        
+        async function loadLectures() {
+            if (!token) return;
+            
+            try {
+                const response = await fetch('/api/lectures', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                const lectures = await response.json();
+                displayLectures(lectures);
+            } catch (error) {
+                showAlert('Failed to load lectures: ' + error.message, 'error');
+            }
+        }
+        
+        function displayLectures(lectures) {
+            const container = document.getElementById('lectures-list');
+            
+            if (lectures.length === 0) {
+                container.innerHTML = '<p>No lectures found. Create your first lecture!</p>';
+                return;
+            }
+            
+            container.innerHTML = lectures.map(lecture => `
+                <div class="lecture-card">
+                    <span class="status-badge status-scheduled">Scheduled</span>
+                    <h3>${lecture.title}</h3>
+                    <p>${lecture.description || 'No description'}</p>
+                    <p><strong>Scheduled:</strong> ${new Date(lecture.scheduled_time).toLocaleString()}</p>
+                    <p><strong>Duration:</strong> ${lecture.duration} minutes</p>
+                    <div class="lecture-actions">
+                        <button class="btn btn-success" onclick="startLiveSession('${lecture.id}')">🔴 Start Live</button>
+                        <button class="btn" onclick="viewMaterials('${lecture.id}')">📁 Materials</button>
+                        <button class="btn" onclick="createQuiz('${lecture.id}')">❓ Quiz</button>
+                        <button class="btn" onclick="createPoll('${lecture.id}')">📊 Poll</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        async function loadLecturesForUpload() {
+            if (!token) return;
+            
+            try {
+                const response = await fetch('/api/lectures', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                const lectures = await response.json();
+                const select = document.getElementById('lecture-select');
+                
+                select.innerHTML = '<option value="">Choose a lecture...</option>' +
+                    lectures.map(lecture => 
+                        `<option value="${lecture.id}">${lecture.title}</option>`
+                    ).join('');
+            } catch (error) {
+                showAlert('Failed to load lectures: ' + error.message, 'error');
+            }
+        }
+        
+        async function loadLiveSessions() {
+            if (!token) return;
+            
+            try {
+                const response = await fetch('/api/lectures', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                const lectures = await response.json();
+                const container = document.getElementById('live-sessions-list');
+                
+                const activeLectures = lectures.filter(lecture => {
+                    const scheduled = new Date(lecture.scheduled_time);
+                    const now = new Date();
+                    const endTime = new Date(scheduled.getTime() + lecture.duration * 60000);
+                    return now >= scheduled && now <= endTime;
+                });
+                
+                if (activeLectures.length === 0) {
+                    container.innerHTML = '<p>No active live sessions.</p>';
+                    return;
+                }
+                
+                container.innerHTML = activeLectures.map(lecture => `
+                    <div class="lecture-card">
+                        <span class="status-badge status-active">Live Now</span>
+                        <h3>${lecture.title}</h3>
+                        <p>${lecture.description || 'No description'}</p>
+                        <div class="lecture-actions">
+                            <button class="btn btn-success" onclick="startLiveSession('${lecture.id}')">🔴 Start Session</button>
+                            <button class="btn" onclick="viewSession('${lecture.id}')">👁️ View Session</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                showAlert('Failed to load live sessions: ' + error.message, 'error');
+            }
+        }
+        
+        // Event listeners
+        document.getElementById('lecture-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            try {
+                const response = await fetch('/api/lectures', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showAlert('Lecture created successfully!', 'success');
+                    e.target.reset();
+                    loadLectures();
+                } else {
+                    showAlert(result.error, 'error');
+                }
+            } catch (error) {
+                showAlert('Failed to create lecture: ' + error.message, 'error');
+            }
+        });
+        
+        function setupFileUpload() {
+            const uploadArea = document.getElementById('upload-area');
+            const fileInput = document.getElementById('file-input');
+            
+            uploadArea.addEventListener('click', () => fileInput.click());
+            
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                selectedFiles = Array.from(e.dataTransfer.files);
+                displaySelectedFiles();
+            });
+            
+            fileInput.addEventListener('change', (e) => {
+                selectedFiles = Array.from(e.target.files);
+                displaySelectedFiles();
+            });
+        }
+        
+        function displaySelectedFiles() {
+            const fileInfo = document.getElementById('file-info');
+            
+            if (selectedFiles.length === 0) {
+                fileInfo.style.display = 'none';
+                return;
+            }
+            
+            fileInfo.innerHTML = `
+                <h4>Selected Files (${selectedFiles.length})</h4>
+                ${selectedFiles.map(file => `
+                    <div style="margin: 0.5rem 0; padding: 0.5rem; background: white; border-radius: 5px;">
+                        <strong>${file.name}</strong> (${(file.size / 1024 / 1024).toFixed(2)} MB)
+                    </div>
+                `).join('')}
+            `;
+            fileInfo.style.display = 'block';
+        }
+        
+        async function uploadMaterial() {
+            const lectureId = document.getElementById('lecture-select').value;
+            const title = document.getElementById('material-title').value;
+            const description = document.getElementById('material-description').value;
+            
+            if (!lectureId || selectedFiles.length === 0) {
+                showAlert('Please select a lecture and at least one file', 'error');
+                return;
+            }
+            
+            const progressBar = document.getElementById('progress-bar');
+            const progressFill = document.getElementById('progress-fill');
+            
+            progressBar.style.display = 'block';
+            
+            for (let i = 0; i < selectedFiles.length; i++) {
+                const file = selectedFiles[i];
+                const formData = new FormData();
+                
+                formData.append('file', file);
+                formData.append('lecture_id', lectureId);
+                formData.append('title', title || file.name);
+                formData.append('description', description);
+                
+                try {
+                    const response = await fetch('/api/upload_material', {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        showAlert(`File ${i + 1} uploaded successfully! Compression: ${result.compression_ratio}`, 'success');
+                    } else {
+                        showAlert(`Failed to upload ${file.name}: ${result.error}`, 'error');
+                    }
+                } catch (error) {
+                    showAlert(`Failed to upload ${file.name}: ${error.message}`, 'error');
+                }
+                
+                // Update progress
+                const progress = ((i + 1) / selectedFiles.length) * 100;
+                progressFill.style.width = progress + '%';
+            }
+            
+            // Reset form
+            selectedFiles = [];
+            document.getElementById('file-input').value = '';
+            document.getElementById('material-title').value = '';
+            document.getElementById('material-description').value = '';
+            document.getElementById('file-info').style.display = 'none';
+            progressBar.style.display = 'none';
+            progressFill.style.width = '0%';
+        }
+        
+        async function startLiveSession(lectureId) {
+            try {
+                const response = await fetch('/api/live_session/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ lecture_id: lectureId })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Open live session in new tab
+                    window.open(`/live/${result.session_id}`, '_blank');
+                    showAlert('Live session started!', 'success');
+                } else {
+                    showAlert(result.error, 'error');
+                }
+            } catch (error) {
+                showAlert('Failed to start live session: ' + error.message, 'error');
+            }
+        }
+        
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert alert-${type}`;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Placeholder functions
+        function viewMaterials(lectureId) {
+            showAlert('Materials view coming soon!', 'success');
+        }
+        
+        function createQuiz(lectureId) {
+            showAlert('Quiz creation coming soon!', 'success');
+        }
+        
+        function createPoll(lectureId) {
+            showAlert('Poll creation coming soon!', 'success');
+        }
+        
+        function viewSession(lectureId) {
+            showAlert('Session view coming soon!', 'success');
+        }
+    </script>
+</body>
+</html>

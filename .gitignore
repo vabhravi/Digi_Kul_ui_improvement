@@ -1,3 +1,8 @@
+# Python
+venv
+.env
+
+# IntelliJ / Android Studio
 *.iml
 .gradle
 /local.properties
@@ -7,7 +12,11 @@
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
+
+# macOS
 .DS_Store
+
+# Build
 /build
 /captures
 .externalNativeBuild
