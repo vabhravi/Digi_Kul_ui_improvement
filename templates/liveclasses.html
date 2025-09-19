@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Live Classes - Upcoming Classes</title>
+<style>
+  /* Reset & base */
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: #f4f7fa;
+    color: #17233d;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  /* Container */
+  .container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 16px 16px 88px; /* bottom padding for nav */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Header */
+  header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 24px;
+  }
+  .back-arrow {
+    display: inline-flex;
+    width: 24px;
+    height: 24px;
+    stroke: #17233d;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    cursor: pointer;
+  }
+  h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+    flex-grow: 1;
+    text-align: center;
+    color: #17233d;
+  }
+  /* Section Title */
+  h2 {
+    margin: 0 0 16px 0;
+    font-size: 1.5rem;
+    font-weight: 800;
+  }
+  /* Cards */
+  .class-card {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+  }
+  .left-side {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  /* Video icon background and icon */
+  .video-icon-bg {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background-color: #d9e9fe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .video-icon {
+    width: 22px;
+    height: 16px;
+    stroke: #2577f9;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+  }
+  /* Class info */
+  .class-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .class-title {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #17233d;
+    line-height: 1.2;
+  }
+  .class-teacher {
+    font-weight: 400;
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+  /* Time section */
+  .time-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    min-width: 72px;
+  }
+  .time-primary {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #17233d;
+  }
+  .time-secondary {
+    font-weight: 400;
+    font-size: 0.75rem;
+    color: #9ca3af;
+  }
+  /* Bottom Nav */
+  nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    background-color: white;
+    border-top: 1px solid #d1d5db;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px 0;
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.75rem;
+    color: #6b7280;
+    user-select: none;
+  }
+  .nav-icon {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    margin-bottom: 2px;
+  }
+  /* Active center button */
+  .nav-center {
+    background-color: #2577f9;
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    margin-top: -32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 4px 8px rgba(37, 119, 249, 0.3);
+    cursor: pointer;
+  }
+  .nav-center .nav-icon {
+    stroke: white;
+    stroke-width: 2.2;
+    width: 28px;
+    height: 20px;
+  }
+</style>
+</head>
+<body>
+  <div class="container" role="main" aria-label="Live Classes upcoming classes">
+    <header>
+      <button aria-label="Go back" class="back-arrow" onclick="history.back()">
+        <svg class="back-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+      </button>
+      <h1>Live Classes</h1>
+      <div style="width:24px;"></div> <!-- Spacer so title is centered -->
+    </header>
+
+    <h2>Upcoming Classes</h2>
+
+    <article class="class-card" tabindex="0" aria-label="Introduction to Biology class by Dr. Anya Sharma starting at 10:00 AM ending at 11:00 AM">
+      <div class="left-side">
+        <div class="video-icon-bg" aria-hidden="true">
+          <svg class="video-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+            <rect x="3" y="6" width="14" height="12" rx="2" ry="2" />
+            <path d="M17 10l4-3v10l-4-3" />
+          </svg>
+        </div>
+        <div class="class-info">
+          <div class="class-title">Introduction to Biology</div>
+          <div class="class-teacher">Dr. Anya Sharma</div>
+        </div>
+      </div>
+      <div class="time-info">
+        <div class="time-primary">10:00 AM</div>
+        <div class="time-secondary">11:00 AM</div>
+      </div>
+    </article>
+
+    <article class="class-card" tabindex="0" aria-label="Calculus I class by Prof. Rohan Verma starting at 11:30 AM ending at 12:30 PM">
+      <div class="left-side">
+        <div class="video-icon-bg" aria-hidden="true">
+          <svg class="video-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+            <rect x="3" y="6" width="14" height="12" rx="2" ry="2" />
+            <path d="M17 10l4-3v10l-4-3" />
+          </svg>
+        </div>
+        <div class="class-info">
+          <div class="class-title">Calculus I</div>
+          <div class="class-teacher">Prof. Rohan Verma</div>
+        </div>
+      </div>
+      <div class="time-info">
+        <div class="time-primary">11:30 AM</div>
+        <div class="time-secondary">12:30 PM</div>
+      </div>
+    </article>
+
+    <article class="class-card" tabindex="0" aria-label="English Literature class by Ms. Divya Patel starting at 1:00 PM ending at 2:00 PM">
+      <div class="left-side">
+        <div class="video-icon-bg" aria-hidden="true">
+          <svg class="video-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+            <rect x="3" y="6" width="14" height="12" rx="2" ry="2" />
+            <path d="M17 10l4-3v10l-4-3" />
+          </svg>
+        </div>
+        <div class="class-info">
+          <div class="class-title">English Literature</div>
+          <div class="class-teacher">Ms. Divya Patel</div>
+        </div>
+      </div>
+      <div class="time-info">
+        <div class="time-primary">1:00 PM</div>
+        <div class="time-secondary">2:00 PM</div>
+      </div>
+    </article>
+
+    <article class="class-card" tabindex="0" aria-label="Physics Fundamentals class by Mr. Vikram Singh starting at 2:30 PM ending at 3:30 PM">
+      <div class="left-side">
+        <div class="video-icon-bg" aria-hidden="true">
+          <svg class="video-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+            <rect x="3" y="6" width="14" height="12" rx="2" ry="2" />
+            <path d="M17 10l4-3v10l-4-3" />
+          </svg>
+        </div>
+        <div class="class-info">
+          <div class="class-title">Physics Fundamentals</div>
+          <div class="class-teacher">Mr. Vikram Singh</div>
+        </div>
+      </div>
+      <div class="time-info">
+        <div class="time-primary">2:30 PM</div>
+        <div class="time-secondary">3:30 PM</div>
+      </div>
+    </article>
+  </div>
+
+  <nav aria-label="Main navigation">
+    <button class="nav-item" aria-label="Dashboard">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+        <path d="M3 12v7a2 2 0 0 0 2 2h4v-7H3zM13 5h4a2 2 0 0 1 2 2v12h-6V5zM3 5a2 2 0 0 1 2-2h6v7H3V5z" stroke="currentColor" />
+      </svg>
+      Dashboard
+    </button>
+    <button class="nav-center" aria-label="Start live class">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+        <rect x="3" y="6" width="14" height="12" rx="2" ry="2" stroke="white" />
+        <path d="M17 10l4-3v10l-4-3" stroke="white" />
+      </svg>
+    </button>
+    <button class="nav-item" aria-label="Materials">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+        <rect x="6" y="4" width="12" height="16" rx="2" ry="2" stroke="currentColor" />
+        <line x1="6" y1="12" x2="18" y2="12" stroke="currentColor" />
+      </svg>
+      Materials
+    </button>
+    <button class="nav-item" aria-label="Profile">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+        <circle cx="12" cy="7" r="4" stroke="currentColor" />
+        <path d="M5.5 20a7 7 0 0 1 13 0" stroke="currentColor" />
+      </svg>
+      Profile
+    </button>
+  </nav>
+</body>
+</html>

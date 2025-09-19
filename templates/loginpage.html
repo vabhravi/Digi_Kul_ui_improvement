@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Digi-kul Login</title>
+<style>
+  /* Background and layout */
+  body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #a2cce3, #c4dff7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .container {
+    width: 360px;
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 15px;
+    padding: 30px 25px 50px 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    position: relative;
+    text-align: center;
+  }
+
+  /* Help icon top right */
+  .help-icon {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 30px;
+    height: 30px;
+    border: 2px solid #5a5a5a;
+    border-radius: 50%;
+    color: #5a5a5a;
+    font-weight: bold;
+    font-size: 22px;
+    line-height: 26px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  /* Heading styles */
+  h1 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 28px;
+    color: #111;
+  }
+
+  h2 {
+    margin-top: 8px;
+    margin-bottom: 16px;
+    font-weight: 700;
+    font-size: 20px;
+    color: #111;
+  }
+
+  p.description {
+    font-size: 14px;
+    color: #444;
+    margin-bottom: 30px;
+  }
+
+  /* Buttons */
+  button {
+    width: 100%;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 12px 10px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-light {
+    background-color: #f7f9fc;
+    color: #444;
+    border: 1px solid #ddd;
+  }
+  .btn-light:hover {
+    background-color: #e8eff9;
+  }
+
+  .btn-google svg {
+    margin-right: 8px;
+  }
+
+  .btn-phone svg {
+    margin-right: 8px;
+  }
+
+  .btn-primary {
+    background-color: #1a73e8;
+    color: white;
+    font-weight: 700;
+  }
+  .btn-primary:hover {
+    background-color: #155dbb;
+  }
+
+  /* Footer */
+  .footer-text {
+    margin-top: 24px;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.3);
+  }
+
+  .footer-text a {
+    color: #1a73e8;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .footer-text a:hover {
+    text-decoration: underline;
+  }
+
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="help-icon" title="Help">?</div>
+    
+    <h1>Digi-kul</h1>
+    <h2>Welcome Back</h2>
+    <p class="description">Sign in to continue your learning journey.</p>
+
+    <button class="btn-light btn-google" type="button">
+      <!-- Google G Icon SVG -->
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <path fill="#4285F4" d="M17.64 9.2045c0-.638-.057-1.251-.162-1.84H9v3.482h4.844a4.144 4.144 0 0 1-1.797 2.716v2.26h2.91c1.707-1.57 2.693-3.89 2.693-6.617z"/>
+        <path fill="#34A853" d="M9 18c2.43 0 4.468-.8 5.957-2.17l-2.91-2.26c-.799.54-1.826.865-3.047.865-2.343 0-4.33-1.582-5.042-3.713H1.94v2.332A8.993 8.993 0 0 0 9 18z"/>
+        <path fill="#FBBC05" d="M3.958 10.722a5.422 5.422 0 0 1 0-3.444V5.946H1.94a8.999 8.999 0 0 0 0 6.108l2.018-1.332z"/>
+        <path fill="#EA4335" d="M9 3.548c1.32 0 2.5.452 3.43 1.34l2.573-2.573C13.462.996 11.423 0 9 0A8.993 8.993 0 0 0 1.94 5.946l2.018 1.332C4.672 5.13 6.659 3.548 9 3.548z"/>
+      </svg>
+      Continue with Google
+    </button>
+
+    <button class="btn-light btn-phone" type="button">
+      <!-- Phone icon SVG -->
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 3.08 5.18 2 2 0 0 1 5 3h3a2 2 0 0 1 2 1.72 12.05 12.05 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L9.91 10.91a16 16 0 0 0 6.18 6.17l1.27-1.27a2 2 0 0 1 2.11-.45 12.05 12.05 0 0 0 2.81.7 2 2 0 0 1 1.72 2z"/></svg>
+      Continue with Phone
+    </button>
+
+    <button class="btn-primary" type="button">
+      Register/Login
+    </button>
+
+    <p class="footer-text">
+      By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+    </p>
+  </div>
+</body>
+</html>

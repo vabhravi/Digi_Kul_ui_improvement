@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Share Materials</title>
+  <style>
+    /* Reset box sizing */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      background-color: #dff2fc; /* light blue background */
+      color: #2e3a59; /* text-foreground dark slate blue */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.4;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 16px 16px 24px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background-color: #e6f1fb; /* subtle lighter blue */
+    }
+
+    /* Header bar */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .back-button {
+      background-color: #e1ebf9;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      border: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .back-button:hover {
+      background-color: #c8d9f7;
+    }
+    .back-icon {
+      border: solid #4b7ec9;
+      border-width: 0 3px 3px 0;
+      display: inline-block;
+      padding: 6px;
+      transform: rotate(135deg);
+      -webkit-transform: rotate(135deg);
+      width: 10px;
+      height: 10px;
+    }
+    .header-title {
+      font-weight: 600;
+      font-size: 1.25rem;
+      color: #2e3a59; /* text-primary */
+    }
+
+    /* Description text */
+    .description {
+      font-weight: 400;
+      font-size: 0.95rem;
+      color: #64748b; /* text-muted-foreground */
+      text-align: center;
+      margin-bottom: 24px;
+      padding: 0 16px;
+      line-height: 1.5;
+    }
+
+    /* Share options container */
+    .share-options {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .share-option {
+      background-color: white;
+      border-radius: 12px;
+      width: 140px;
+      height: 140px;
+      box-shadow: 0 2px 6px rgb(0 0 0 / 0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: box-shadow 0.2s ease;
+    }
+    .share-option:hover {
+      box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+    }
+    .share-icon-container {
+      background-color: #d7e5ff; /* accent lighter blue */
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .bluetooth-icon {
+      fill: #4b7ec9;
+      width: 28px;
+      height: 28px;
+    }
+    .wifi-icon {
+      fill: #43a8f4;
+      width: 28px;
+      height: 28px;
+    }
+    .share-label {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #2e3a59;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    /* Separator line */
+    hr.divider {
+      border: none;
+      border-top: 1px solid #cfd9e9;
+      margin-bottom: 20px;
+    }
+
+    /* Materials header */
+    .materials-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 8px;
+      margin-bottom: 16px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #2e3a59;
+    }
+    .select-all {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #43a8f4;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.2s ease;
+    }
+    .select-all:hover {
+      color: #2a85d6;
+    }
+
+    /* Material items list */
+    .materials-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex-grow: 1;
+      overflow-y: auto;
+      padding-right: 4px;
+      margin-bottom: 24px;
+    }
+
+    .material-card {
+      background-color: white;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 16px;
+      box-shadow: 0 1px 4px rgb(0 0 0 / 0.1);
+    }
+
+    .material-icon-container {
+      background-color: #d7e5ff;
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0;
+      color: #3b8cfb;
+    }
+
+    /* PDF icon */
+    .pdf-icon {
+      width: 28px;
+      height: 28px;
+      stroke: #3b8cfb;
+      fill: none;
+      stroke-width: 1.5;
+    }
+    /* Video icon */
+    .video-icon {
+      width: 28px;
+      height: 28px;
+      fill: #3b8cfb;
+    }
+    /* Calculator icon */
+    .calc-icon {
+      width: 28px;
+      height: 28px;
+      stroke: #3b8cfb;
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    /* Material text content */
+    .material-text-content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+    .material-title {
+      font-weight: 700;
+      color: #2e3a59;
+      font-size: 1rem;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .material-subtitle {
+      font-weight: 400;
+      color: #64748b;
+      font-size: 0.85rem;
+    }
+
+    /* Checkbox container */
+    .material-checkbox {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      border-radius: 12px;
+      border: 2px solid #cbd5e1;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+    .material-checkbox input {
+      appearance: none;
+      -webkit-appearance: none;
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      margin: 0;
+      cursor: pointer;
+    }
+    .material-checkbox input:checked + svg {
+      display: block;
+    }
+    .material-checkbox:hover {
+      border-color: #43a8f4;
+    }
+    .material-checkbox:focus-within {
+      outline: 2px solid #43a8f4;
+      outline-offset: 2px;
+    }
+    /* Hide checkmark svg initially */
+    .checkmark {
+      display: none;
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: white;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .material-checkbox input:checked {
+      background-color: #43a8f4;
+      border-color: #43a8f4;
+    }
+
+    /* Bottom button */
+    .share-now-button {
+      background-color: #43a8f4;
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 9999px;
+      padding: 14px 0;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: 0 5px 10px rgb(67 168 244 / 0.45);
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    .share-now-button:hover {
+      background-color: #2a85d6;
+    }
+    .share-now-button:active {
+      background-color: #1c5ab5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" role="main" aria-label="Share materials interface">
+    <header class="header">
+      <button type="button" aria-label="Go back" class="back-button">
+        <i class="back-icon" aria-hidden="true"></i>
+      </button>
+      <h1 class="header-title">Share Materials</h1>
+    </header>
+
+    <p class="description" id="desc-text">
+      Share your downloaded materials with nearby friends without an internet connection.
+    </p>
+
+    <section class="share-options" aria-label="Sharing options">
+      <button type="button" class="share-option" aria-describedby="share-via-bluetooth">
+        <div class="share-icon-container" aria-hidden="true">
+          <svg class="bluetooth-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false" >
+            <path d="M6.75 6.75l10.5 10.5-5.25 5.25V2.25l5.25 5.25-10.5 10.5" stroke="#4b7ec9" stroke-width="2" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span id="share-via-bluetooth" class="share-label">Share via Bluetooth</span>
+      </button>
+      <button type="button" class="share-option" aria-describedby="share-via-wifi">
+        <div class="share-icon-container" aria-hidden="true">
+          <svg class="wifi-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M2.05 8.96a15.824 15.824 0 0 1 19.9 0M4.92 11.83a11.803 11.803 0 0 1 14.16 0M7.8 14.7a7.769 7.769 0 0 1 8.4 0M12 21.75a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" stroke="#43a8f4" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <span id="share-via-wifi" class="share-label">Share via Wi-Fi</span>
+      </button>
+    </section>
+
+    <hr class="divider" />
+
+    <div class="materials-header">
+      <span>Select Materials to Share</span>
+      <button type="button" class="select-all" id="selectAllBtn">Select All</button>
+    </div>
+
+    <form class="materials-list" aria-label="List of downloadable materials to share" id="materialsForm">
+      <label class="material-card" for="material1">
+        <div class="material-icon-container" aria-hidden="true">
+          <svg class="pdf-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <rect x="6" y="6" width="12" height="12" rx="2" ry="2" stroke="#3b8cfb" fill="#d7e5ff" stroke-width="1.5"/>
+            <text x="12" y="15" text-anchor="middle" font-size="9" fill="#3b8cfb" font-family="Arial, sans-serif" font-weight="700">PDF</text>
+          </svg>
+        </div>
+        <div class="material-text-content">
+          <span class="material-title">Intro to Algebra Ch. 1</span>
+          <span class="material-subtitle">PDF - 2.5 MB</span>
+        </div>
+        <div class="material-checkbox" tabindex="0">
+          <input type="checkbox" name="material1" id="material1" aria-labelledby="material1Label" />
+          <svg class="checkmark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </div>
+      </label>
+
+      <label class="material-card" for="material2">
+        <div class="material-icon-container" aria-hidden="true">
+          <svg class="video-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="10" cy="12" r="7" fill="#3b8cfb"/>
+            <polygon points="14,8 18,12 14,16" fill="#d7e5ff"/>
+          </svg>
+        </div>
+        <div class="material-text-content">
+          <span class="material-title">The Laws of Motion</span>
+          <span class="material-subtitle">Video - 45.2 MB</span>
+        </div>
+        <div class="material-checkbox" tabindex="0">
+          <input type="checkbox" name="material2" id="material2" aria-labelledby="material2Label" />
+          <svg class="checkmark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </div>
+      </label>
+
+      <label class="material-card" for="material3">
+        <div class="material-icon-container" aria-hidden="true">
+          <svg class="calc-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <rect x="5" y="5" width="14" height="14" rx="2" ry="2" stroke="#3b8cfb" fill="#d7e5ff" stroke-width="1.5"/>
+            <path d="M8 8h8M8 11h8M8 14h8" stroke="#3b8cfb" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M11 17v-6" stroke="#3b8cfb" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="material-text-content">
+          <span class="material-title">Trigonometry Basics</span>
+          <span class="material-subtitle">PDF - 3.1 MB</span>
+        </div>
+        <div class="material-checkbox" tabindex="0">
+          <input type="checkbox" name="material3" id="material3" aria-labelledby="material3Label" checked />
+          <svg class="checkmark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </div>
+      </label>
+    </form>
+
+    <button class="share-now-button" type="button">Share Now</button>
+  </div>
+
+  <script>
+    // Select all / deselect all functionality
+    const selectAllBtn = document.getElementById("selectAllBtn");
+    const materialsForm = document.getElementById("materialsForm");
+    const checkboxes = materialsForm.querySelectorAll('input[type="checkbox"]');
+
+    selectAllBtn.addEventListener("click", () => {
+      const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+      checkboxes.forEach(cb => (cb.checked = !allChecked));
+    });
+  </script>
+</body>
+</html>
